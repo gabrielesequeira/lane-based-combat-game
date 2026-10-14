@@ -1,0 +1,14 @@
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\factory\BossFactory.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\factory\CommonEnemyFactory.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\factory\EnemyFactory.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\game\Game.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\Main.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\model\enemy\Boss.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\model\enemy\CommonEnemy.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\model\enemy\Enemy.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\model\Lane.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\model\Player.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\model\Wave.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\strategy\AttackStrategy.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\strategy\BasicAttack.java
+C:\Users\gabriele\Desktop\lane-based-combat-game\src\main\java\com\lanebasedcombat\ui\GameConsole.java
