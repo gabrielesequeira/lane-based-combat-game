@@ -1,81 +1,140 @@
-
 package com.lanebasedcombat.ui;
 
 import java.util.Scanner;
 
 public class GameConsole {
-
     private final Scanner scanner;
 
     public GameConsole() {
-        this.scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);
     }
 
     public void showWelcome() {
         System.out.println();
-        System.out.println("==========================================");
-        System.out.println("          LANE-BASED COMBAT GAME");
-        System.out.println("==========================================");
-        System.out.println("Defenda-se dos inimigos nas tres pistas!");
-        System.out.println("Elimine tres ondas e derrote o chefe final.");
+        System.out.println("==================================================");
+        System.out.println("             LANE-BASED COMBAT GAME");
+        System.out.println("==================================================");
         System.out.println();
-        System.out.println("COMO JOGAR:");
-        System.out.println("- Escolha a pista 1, 2 ou 3 para atacar.");
-        System.out.println("- Os inimigos avancam a cada turno.");
+        System.out.println("REGRAS DO JOGO");
+        System.out.println("- Defenda-se dos inimigos em três pistas.");
+        System.out.println("- Sobreviva a três ondas com dez inimigos cada.");
         System.out.println("- Cada inimigo comum derrotado vale 100 pontos.");
         System.out.println("- O chefe final vale 500 pontos.");
-        System.out.println("==========================================");
+        System.out.println("- Você começa com 3 vidas.");
+        System.out.println("- Se um inimigo alcançar você, perderá vida.");
+        System.out.println("- Para vencer, derrote o chefe na batalha final.");
+        System.out.println();
+        System.out.println("==================================================");
     }
 
-    public void showStatus(int lives, int score) {
+    public void showTurnHeader(
+            String stage,
+            int turn,
+            int lives,
+            int maxLives,
+            int score,
+            int remainingEnemies,
+            Iterable<String> history) {
+
         System.out.println();
-        System.out.println("------------------------------------------");
-        System.out.println("VIDAS: " + lives + " | PONTUACAO: " + score);
-        System.out.println("------------------------------------------");
+        System.out.println("==================================================");
+        System.out.println("                   O JOGO!");
+        System.out.println("==================================================");
+        System.out.println(stage + " | TURNO " + turn);
+        System.out.println("Vidas: " + lives + "/" + maxLives
+                + " | Pontos: " + score);
+        System.out.println("Inimigos restantes: " + remainingEnemies);
+        System.out.println();
+
+
+    }
+
+    public void showBoard(String[][] board, int rows, int columns) {
+        System.out.println("TABULEIRO");
+        System.out.print("Posicao ");
+
+        for (int column = 1; column <= columns; column++) {
+            System.out.printf("| Pista %-10d", column);
+        }
+
+        System.out.println("|");
+
+        for (int row = 0; row < rows; row++) {
+            System.out.printf("%7d ", row);
+
+            for (int column = 0; column < columns; column++) {
+                System.out.printf("| %-14s", board[row][column]);
+            }
+
+            System.out.println("|");
+        }
+
+        System.out.println();
     }
 
     public int askLane() {
-        while (true) {
-            System.out.print(
-                    "Escolha a posicao de ataque "
-                    + "(7,1 = 1 | 7,2 = 2 | 7,3 = 3): "
-            );
+        System.out.println("DECISAO DO JOGADOR");
+        System.out.println("Escolha a pista que deseja atacar.");
 
-            if (scanner.hasNextInt()) {
-                int lane = scanner.nextInt();
+        while (true) {
+            System.out.print("Digite 1, 2 ou 3: ");
+
+            if (!scanner.hasNextLine()) {
+                return 1;
+            }
+
+            String input = scanner.nextLine().trim();
+
+            try {
+                int lane = Integer.parseInt(input);
 
                 if (lane >= 1 && lane <= 3) {
                     return lane;
                 }
-            } else {
-                scanner.next();
+            } catch (NumberFormatException ignored) {
+                // Entrada invalida: solicitar novamente.
             }
 
-            System.out.println(
-                    "Opcao invalida. Digite 1, 2 ou 3."
-            );
+            System.out.println("Opcao invalida. Escolha 1, 2 ou 3.");
         }
     }
 
+    public void showHistory(Iterable<String> history) {
+        System.out.println();
+        System.out.println("========== HISTORICO DA PARTIDA ==========");
+
+        boolean hasHistory = false;
+
+        for (String entry : history) {
+            System.out.println(" - " + entry);
+            hasHistory = true;
+        }
+
+        if (!hasHistory) {
+            System.out.println("Nenhum acontecimento registrado.");
+        }
+
+        System.out.println("==========================================");
+    }
+
     public void showMessage(String message) {
-        System.out.println(message);
+        System.out.println("[JOGO] " + message);
     }
 
     public void showGameOver(int score) {
         System.out.println();
-        System.out.println("==========================================");
-        System.out.println("                FIM DE JOGO");
-        System.out.println("Voce nao conseguiu defender sua posicao.");
+        System.out.println("==================================================");
+        System.out.println("                    FIM DE JOGO");
         System.out.println("Pontuacao final: " + score);
-        System.out.println("==========================================");
+        System.out.println("==================================================");
     }
 
     public void showVictory(int score) {
         System.out.println();
-        System.out.println("==========================================");
-        System.out.println("           PARABENS! VOCE VENCEU!");
-        System.out.println("Voce derrotou todas as ondas e o chefe!");
+        System.out.println("==================================================");
+        System.out.println("                VITORIA GLORIOSA!");
+        System.out.println("          O chefe final foi derrotado!");
         System.out.println("Pontuacao final: " + score);
-        System.out.println("==========================================");
+        System.out.println("==================================================");
     }
 }

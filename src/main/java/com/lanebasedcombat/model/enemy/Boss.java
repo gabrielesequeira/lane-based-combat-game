@@ -3,7 +3,7 @@ package com.lanebasedcombat.model.enemy;
 public class Boss extends Enemy {
 
     public Boss() {
-        super("Chefe final", 5, 1);
+        super("Chefe final", 3, 1);
     }
 
     @Override

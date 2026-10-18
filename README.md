@@ -1,311 +1,576 @@
-# Lane-Based Combat Game
+﻿# Lane-Based Combat Game
 
-Projeto acadêmico da disciplina **Design Patterns**, com proposta de desenvolvimento de um jogo de combate por lanes (caminhos), utilizando Java e uma interface de terminal.
+## 1. Visão geral do projeto
 
-> **Status do projeto:** planejamento e padrões iniciais definidos. A UML proposta está documentada abaixo; o diagrama final, a implementação e os testes deverão ser atualizados conforme o desenvolvimento avançar.
+O **Lane-Based Combat Game** é um jogo de combate por turnos desenvolvido em Java, executado no terminal. O jogador precisa defender sua posição contra inimigos que avançam por três pistas. A cada turno, é necessário escolher uma pista e atacar os inimigos antes que eles alcancem o jogador.
 
-## 1. Descrição do projeto
+O jogo foi desenvolvido com foco na aplicação de conceitos de Programação Orientada a Objetos e padrões de projeto, buscando separar as responsabilidades de gerenciamento da partida, representação dos personagens, criação dos inimigos, execução dos ataques e interação com o usuário.
 
-O Lane-Based Combat Game é um jogo por turnos no qual inimigos aparecem em diferentes caminhos e avançam em direção ao personagem do jogador. O objetivo é derrotar os inimigos antes que alcancem o jogador. Para vencer, o jogador deve sobreviver às ondas de inimigos comuns e derrotar um chefão no final.
+### Objetivos do projeto
 
-O projeto será desenvolvido em **Java**, com interação pelo **terminal**, conforme as opções permitidas no enunciado.
+- Desenvolver um jogo funcional executado no terminal.
+- Aplicar conceitos de encapsulamento, herança, abstração e polimorfismo.
+- Utilizar padrões de projeto para organizar a criação de inimigos e o comportamento de ataque.
+- Implementar progressão por ondas e uma batalha final contra um chefe.
+- Criar testes automatizados para verificar as principais regras e comportamentos do jogo.
 
-## 2. Objetivos
+### Tecnologias utilizadas
 
-- Desenvolver um jogo funcional com múltiplas lanes e ondas de inimigos.
-- Aplicar conceitos de orientação a objetos e Design Patterns de forma justificada.
-- Representar a arquitetura do sistema por meio de diagramas UML.
-- Implementar pelo menos duas funcionalidades adicionais às descritas no enunciado.
-- Documentar as decisões, suposições, padrões utilizados e eventual uso de ferramentas de Inteligência Artificial (IA).
+- **Java 17:** linguagem de programação.
+- **Maven:** gerenciamento do projeto, compilação e execução dos testes.
+- **JUnit 5:** implementação dos testes automatizados.
+- **Mermaid:** representação dos diagramas UML na documentação.
 
-## 3. Escopo e decisões de projeto
+---
 
-O enunciado deixa alguns detalhes em aberto. Para tornar o jogo implementável, foram propostas as seguintes decisões:
+## 2. Modelagem UML inicial
 
-| Item | Decisão inicial | Justificativa |
-|---|---|---|
-| Linguagem | Java | Uma das linguagens permitidas no enunciado e adequada à aplicação de orientação a objetos e Design Patterns. |
-| Interface | Terminal | Atende ao requisito de interação textual, sem exigir uma interface gráfica. |
-| Modalidade | Trabalho individual | Definição de organização do trabalho. |
-| Tipo de combate | Por turnos | Simplifica a interação no terminal, a compreensão das ações e a realização de testes. |
-| Número de lanes | 3 | Oferece escolhas estratégicas sem tornar a primeira versão excessivamente complexa. |
-| Vida inicial do jogador | 3 pontos de vida | Define uma condição objetiva de derrota e exige que o jogador evite a passagem dos inimigos. |
-| Pontuação por inimigo comum | 100 pontos | Recompensa o jogador por cada inimigo comum derrotado. |
-| Vida do inimigo comum | 1 ponto de vida | Permite que o ataque básico derrote um inimigo comum em um golpe. |
-| Vida do chefão | 5 pontos de vida, equivalente a cinco vezes a vida de um inimigo comum | Torna o confronto final mais longo e diferencia o chefão dos inimigos comuns. |
-| Recompensa por derrotar o chefão | 500 pontos | Mantém a recompensa proporcional à resistência proposta para o chefão. |
-| Quantidade de ondas comuns | 3 ondas com 3 inimigos por onda | Escopo inicial pequeno e controlado para facilitar a implementação e os testes. |
+A modelagem inicial representa a estrutura fundamental planejada para o jogo, considerando as responsabilidades centrais antes da incorporação das funcionalidades adicionais.
 
-Os valores e regras desta tabela são decisões de projeto, e não requisitos numéricos expressos no enunciado original. Eles poderão ser ajustados durante a implementação caso testes revelem problemas de equilíbrio ou funcionamento.
+A estrutura parte de uma classe responsável pelo gerenciamento da partida, uma representação do jogador, pistas que armazenam os inimigos, uma classe abstrata para os inimigos e uma estrutura para controlar as ondas. Também contempla os contratos para criação de inimigos e execução de ataques.
 
-## 4. Regras de funcionamento propostas
-
-### 4.1. Estrutura das fases
-
-O jogo será organizado em três ondas de inimigos comuns, seguidas por uma batalha final:
-
-1. **Onda 1:** três inimigos comuns.
-2. **Onda 2:** três inimigos comuns.
-3. **Onda 3:** três inimigos comuns.
-4. **Batalha final:** um chefão com cinco pontos de vida.
-
-Ao todo, a proposta prevê nove inimigos comuns e um chefão. A batalha final será liberada após a conclusão das três ondas comuns.
-
-### 4.2. Lanes e movimentação
-
-- O mapa terá três lanes, identificadas como 1, 2 e 3.
-- Cada inimigo estará associado a uma lane.
-- Para a versão inicial, está prevista uma distância de seis posições entre a entrada dos inimigos e o jogador.
-- Ao final de cada turno, os inimigos vivos avançarão uma posição em direção ao jogador.
-- A proposta inicial é introduzir um inimigo por turno, respeitando a sequência da onda.
-- Quando um inimigo alcançar a posição do jogador, ele causará a perda de um ponto de vida e será removido do mapa.
-
-A distância de seis posições e a introdução de um inimigo por turno são parâmetros de projeto que serão validados durante a implementação.
-
-### 4.3. Ações de combate
-
-- O jogador poderá escolher uma lane para atacar em cada turno.
-- O ataque básico causará um ponto de dano.
-- Um inimigo comum possui um ponto de vida e será derrotado com um ataque bem-sucedido.
-- O chefão possui cinco pontos de vida e precisará receber cinco ataques bem-sucedidos para ser derrotado, caso o ataque básico continue causando um ponto de dano.
-- Atacar uma lane vazia não causará dano nem concederá pontos.
-- A movimentação dos inimigos ocorrerá ao final do turno, de acordo com a ordem de ações que será implementada e testada.
-
-### 4.4. Sistema de pontuação
-
-O sistema de pontuação é uma das funcionalidades adicionais escolhidas para o projeto.
-
-- Cada inimigo comum derrotado concede 100 pontos.
-- Derrotar o chefão concede 500 pontos.
-- Atacar uma lane vazia não concede pontos.
-- A pontuação acumulada será exibida ao jogador, inclusive ao final da partida.
-
-Se o jogador derrotar todos os inimigos comuns e o chefão, a pontuação máxima prevista pelas regras atuais será de **1.400 pontos**: 900 pontos pelos nove inimigos comuns e 500 pontos pelo chefão.
-
-### 4.5. Condições de término
-
-**Vitória:** o jogador derrota os nove inimigos comuns, conclui as três ondas e derrota o chefão final. O jogo termina exibindo a pontuação final.
-
-**Derrota:** o jogador perde os três pontos de vida porque inimigos alcançam sua posição. O jogo termina e exibe a pontuação obtida.
-
-## 5. Funcionalidades adicionais
-
-O enunciado solicita pelo menos duas funcionalidades não definidas explicitamente na descrição inicial. Foram selecionadas as seguintes:
-
-### 5.1. Sistema de pontuação
-
-O jogador acumula pontos ao derrotar inimigos. A pontuação permite acompanhar o desempenho durante a partida e acrescenta um objetivo além de sobreviver.
-
-### 5.2. Chefão no final
-
-Após as três ondas comuns, o jogador enfrenta um inimigo final com cinco vezes a vida de um inimigo comum. A batalha final funciona como objetivo de conclusão e diferencia o último confronto dos anteriores.
-
-As duas funcionalidades deverão aparecer na modelagem UML final e ser descritas com mais detalhes após sua implementação.
-
-## 6. Design Patterns selecionados para a UML inicial
-
-Foram selecionados dois padrões para a arquitetura inicial: **Strategy**, aplicado ao ataque do jogador, e **Factory Method**, aplicado à criação de inimigos. A escolha deverá ser confirmada pelo código: o padrão só deverá ser considerado implementado se as classes e os métodos realmente seguirem a estrutura descrita.
-
-### 6.1. Strategy — comportamento de ataque
-
-A interface `AttackStrategy` define uma operação de ataque, enquanto `BasicAttack` implementa o ataque básico que causa um ponto de dano. A classe `Player` mantém uma referência para `AttackStrategy` e delega a ela a execução do ataque, em vez de concentrar a regra diretamente em `Player`.
-
-**Justificativa:** essa separação mantém a lógica de combate independente do gerenciamento de vidas e do restante do estado do jogador. Caso o projeto receba ataques especiais no futuro, poderão ser adicionadas novas implementações da interface sem reescrever a estrutura principal de `Player`. Na versão inicial haverá apenas o ataque básico; portanto, a vantagem imediata é a separação de responsabilidades e a extensibilidade, não a existência de várias opções de ataque já disponíveis.
-
-### 6.2. Factory Method — criação de inimigos
-
-A classe abstrata `EnemyFactory` declara o método `createEnemy()`. A classe `CommonEnemyFactory` implementa esse método para criar `CommonEnemy`. Na evolução do jogo, `BossFactory` poderá implementar o mesmo método para criar `Boss`, mantendo a criação específica de cada tipo separada da lógica que controla as ondas.
-
-**Justificativa:** centralizar a criação dos inimigos evita espalhar pelo jogo os detalhes de instanciação e inicialização de cada tipo. Quando o chefão for incluído na versão com funcionalidades extras, será possível adicionar uma fábrica específica e manter `Game` e `Wave` menos dependentes das classes concretas. A estrutura deve ser mantida simples e corresponder ao uso real no código.
-
-### 6.3. Por que não selecionar outros padrões agora?
-
-`Observer` não será incluído na UML inicial porque, neste momento, não foi identificada uma necessidade concreta de vários componentes reagirem de forma independente a eventos do jogo. Evitar padrões sem uma função clara torna a modelagem mais simples e a justificativa acadêmica mais consistente.
-
-## 7. Modelagem UML
-
-Os diagramas abaixo são **propostas de arquitetura**, não uma afirmação de que o código já foi implementado. Devem ser revisados para corresponder às classes e aos relacionamentos efetivamente desenvolvidos.
-
-### 7.1. UML inicial
-
-A UML inicial apresenta o núcleo do jogo, o padrão Strategy no ataque e a estrutura de Factory Method para criar inimigos comuns.
+### Diagrama de classes inicial
 
 ```mermaid
 classDiagram
+    class Main {
+        +main(String[] args)
+    }
+
     class Game {
         -Player player
         -List~Lane~ lanes
-        -List~Wave~ waves
+        -Wave currentWave
         +start()
-        +executeTurn()
-        +checkGameOver()
     }
+
     class Player {
         -int lives
-        -AttackStrategy attackStrategy
-        +attack(Lane lane)
-        +takeDamage()
+        -int score
+        +isAlive() boolean
+        +takeDamage(int damage)
+        +addScore(int points)
     }
+
     class Lane {
         -int number
         -List~Enemy~ enemies
         +addEnemy(Enemy enemy)
-        +moveEnemies()
-        +getEnemies()
+        +removeDefeatedEnemies()
     }
+
     class Enemy {
         <<abstract>>
         -int health
         -int position
-        +move()
+        +isAlive() boolean
         +takeDamage(int damage)
-        +isDefeated() bool
+        +move()
+        +getPoints() int
     }
+
     class CommonEnemy {
-        +CommonEnemy()
+        +getPoints() int
     }
+
     class Wave {
-        -List~Enemy~ enemiesToSpawn
-        +spawnNextEnemy()
-        +isComplete() bool
+        -int number
+        -int spawnedEnemies
+        +hasEnemiesToSpawn() boolean
+        +registerSpawn()
+        +isFinished() boolean
     }
+
     class EnemyFactory {
         <<abstract>>
-        +createEnemy()* Enemy
+        +createEnemy() Enemy
     }
+
     class CommonEnemyFactory {
         +createEnemy() Enemy
     }
+
     class AttackStrategy {
         <<interface>>
         +attack(Enemy enemy)
     }
+
     class BasicAttack {
         +attack(Enemy enemy)
     }
-    class GameConsole {
-        +displayGame()
-        +readCommand()
-    }
-    Game *-- Player
-    Game *-- Lane
-    Game *-- Wave
+
+    Main --> Game
+    Game --> Player
+    Game --> Lane
+    Game --> Wave
     Lane o-- Enemy
-    Wave ..> EnemyFactory : requests creation
     Enemy <|-- CommonEnemy
     EnemyFactory <|-- CommonEnemyFactory
-    EnemyFactory ..> Enemy : creates
-    Player --> AttackStrategy : delegates attack
+    EnemyFactory ..> Enemy : cria
     AttackStrategy <|.. BasicAttack
-    GameConsole ..> Game : interacts
+    BasicAttack ..> Enemy : ataca
 ```
 
-**Relacionamentos principais:** `Game` coordena `Player`, `Lane` e `Wave`; cada `Lane` mantém os inimigos nela presentes; `Wave` solicita à fábrica a criação de inimigos; `CommonEnemyFactory` concretiza `EnemyFactory`; `CommonEnemy` herda os atributos e comportamentos de `Enemy`; e `Player` delega a execução do ataque à interface `AttackStrategy`, implementada por `BasicAttack`.
+A modelagem inicial estabelece as principais relações do domínio. A classe `Game` coordena os elementos da partida; `Lane` mantém os inimigos presentes em cada pista; `Enemy` define os comportamentos compartilhados pelos inimigos; e `Wave` controla a progressão da partida.
 
-### 7.2. Evolução prevista para a UML final
+Os padrões Strategy e Factory Method foram incorporados para permitir que o comportamento de ataque e a criação de inimigos sejam organizados em componentes específicos.
 
-A UML final deverá refletir as duas funcionalidades extras selecionadas: sistema de pontuação e chefão final. Abaixo está a extensão prevista, que deverá ser integrada ao diagrama inicial e validada após a implementação.
+---
+
+## 3. Padrões de projeto utilizados e justificativas
+
+Foram utilizados dois padrões de projeto: **Strategy** e **Factory Method**.
+
+### 3.1. Strategy
+
+**Objetivo:** encapsular o comportamento de ataque em uma abstração separada, permitindo que a lógica de combate não dependa diretamente de uma implementação específica.
+
+No projeto, o padrão é representado por:
+
+- `AttackStrategy`: interface que define o método `attack(Enemy enemy)`.
+- `BasicAttack`: implementação concreta da estratégia de ataque.
+
+A classe `BasicAttack` verifica se o inimigo recebido não é nulo e está vivo antes de aplicar um ponto de dano.
+
+Essa separação facilita a evolução do sistema. Caso seja necessário adicionar outros tipos de ataque no futuro, novas implementações poderão seguir o contrato `AttackStrategy`, sem exigir que todas as regras de ataque sejam concentradas em uma única classe.
+
+**Justificativa:** o padrão foi utilizado para separar a lógica de ataque das demais responsabilidades do jogo, favorecendo a organização, a manutenção e a possibilidade de extensão do combate.
+
+### 3.2. Factory Method
+
+**Objetivo:** centralizar a criação de objetos de inimigos por meio de um contrato comum, deixando que implementações específicas determinem qual tipo de inimigo será instanciado.
+
+No projeto, o padrão é representado por:
+
+- `EnemyFactory`: classe abstrata que declara o método `createEnemy()`.
+- `CommonEnemyFactory`: implementação responsável pela criação de `CommonEnemy`.
+- `BossFactory`: implementação responsável pela criação de `Boss`.
+
+As fábricas retornam objetos do tipo abstrato `Enemy`, embora cada implementação produza uma classe concreta diferente.
+
+**Justificativa:** o padrão reduz o acoplamento entre a lógica de gerenciamento da partida e a instanciação dos inimigos. A criação de inimigos comuns e do chefe fica concentrada em classes próprias, facilitando a inclusão de novos tipos de inimigos.
+
+### 3.3. Relação entre os padrões e a arquitetura
+
+Os dois padrões atendem a responsabilidades diferentes:
+
+| Padrão | Responsabilidade no projeto | Benefício |
+|---|---|---|
+| Strategy | Define como um ataque é realizado | Facilita a substituição e a extensão dos comportamentos de ataque |
+| Factory Method | Define como cada tipo de inimigo é criado | Centraliza a instanciação e reduz o acoplamento |
+
+A aplicação dos padrões contribui para uma arquitetura mais organizada, na qual criação de objetos, comportamento de combate e gerenciamento da partida possuem responsabilidades distintas.
+
+---
+
+## 4. Decisões e suposições durante o desenvolvimento
+
+Durante o desenvolvimento, foram adotadas decisões para manter as regras do jogo compreensíveis e permitir a separação entre as entidades do domínio e a lógica responsável pela execução da partida.
+
+### 4.1. Organização das classes
+
+O código foi organizado em pacotes de acordo com a responsabilidade de cada componente:
+
+- `factory`: classes responsáveis pela criação de inimigos.
+- `game`: gerenciamento do fluxo da partida.
+- `model`: entidades e estruturas fundamentais do jogo.
+- `model.enemy`: hierarquia de inimigos.
+- `strategy`: contratos e implementações de ataques.
+- `ui`: interação com o usuário por meio do terminal.
+
+A classe `Main` funciona como ponto de entrada da aplicação.
+
+### 4.2. Separação entre modelo, regras e interface
+
+As entidades do domínio não concentram toda a lógica da aplicação. A classe `Game` coordena a progressão da partida, enquanto `Player`, `Lane`, `Wave` e as classes de inimigos representam elementos específicos do jogo.
+
+A classe `GameConsole` é responsável pela apresentação de informações e pela interação com o usuário no terminal.
+
+Essa separação facilita a manutenção do código e permite testar diferentes partes do sistema de maneira mais isolada.
+
+### 4.3. Hierarquia de inimigos
+
+A classe abstrata `Enemy` concentra características compartilhadas, como vida, posição, movimentação e recebimento de dano.
+
+As classes `CommonEnemy` e `Boss` especializam esse comportamento, permitindo que cada tipo de inimigo tenha características próprias, como pontuação e quantidade inicial de vida.
+
+Essa decisão utiliza herança e polimorfismo para evitar a duplicação desnecessária de comportamentos comuns.
+
+### 4.4. Regras de combate e progressão
+
+O jogo foi estruturado em torno de três pistas e três ondas de inimigos comuns. Cada onda prevê o surgimento de dez inimigos comuns, totalizando trinta inimigos comuns nas ondas regulares.
+
+O jogador começa com três vidas. Os inimigos avançam pelas pistas, e aqueles que alcançam a posição do jogador causam dano e são removidos da pista.
+
+A progressão depende do controle das ondas e dos inimigos ainda presentes na partida. O chefe final só aparece quando os trinta inimigos comuns das ondas regulares tiverem sido resolvidos e as pistas estiverem livres.
+
+### 4.5. Pontuação
+
+A pontuação é concedida de acordo com o tipo de inimigo derrotado:
+
+- Inimigo comum: 100 pontos.
+- Chefe final: 500 pontos.
+
+A pontuação é armazenada no jogador e atualizada durante a partida.
+
+### 4.6. Condições de vitória e derrota
+
+A derrota acontece quando o jogador perde todas as vidas disponíveis.
+
+A vitória acontece quando o chefe final é derrotado, desde que o jogador ainda esteja vivo.
+
+Essas condições determinam o encerramento da partida e a apresentação do resultado final.
+
+---
+
+## 5. Funcionalidades adicionais implementadas
+
+Além da estrutura básica de combate, foram implementadas funcionalidades que ampliam a progressão e o desafio do jogo.
+
+### 5.1. Progressão por três ondas
+
+A partida possui três ondas regulares, com dez inimigos comuns previstos em cada uma. A classe `Wave` controla a quantidade de inimigos gerados e permite verificar se ainda existem inimigos a serem gerados e se a onda terminou.
+
+### 5.2. Movimentação dos inimigos
+
+Os inimigos possuem uma posição que avança ao longo da pista. Quando um inimigo alcança o jogador, ocorre a perda de uma vida e a remoção daquele inimigo da pista.
+
+Essa mecânica obriga o jogador a equilibrar a escolha das pistas e a prioridade dos ataques.
+
+### 5.3. Pontuação por inimigo derrotado
+
+A pontuação é atualizada conforme os inimigos são derrotados. Inimigos comuns concedem 100 pontos, enquanto o chefe final concede 500 pontos.
+
+A regra permite acompanhar o desempenho do jogador durante a partida.
+
+### 5.4. Chefe final
+
+Após a resolução dos inimigos das três ondas regulares e quando não há mais inimigos ocupando as pistas, o jogo inicia o confronto final.
+
+O chefe possui três pontos de vida e aparece na pista central. Sua derrota encerra a partida com vitória, desde que o jogador permaneça vivo.
+
+### 5.5. Inimigos de apoio do chefe
+
+A batalha final inclui quatro inimigos comuns de apoio: dois em cada uma das pistas laterais. O chefe permanece na pista central.
+
+Essa formação adiciona um desafio à etapa final, pois o jogador precisa lidar com o chefe e com os inimigos de apoio.
+
+### 5.6. Interface de terminal
+
+A classe `GameConsole` apresenta as informações da partida, incluindo o estado das pistas, a situação do jogador e a pontuação. Também apresenta mensagens relacionadas aos ataques, à movimentação dos inimigos e ao encerramento do jogo.
+
+### 5.7. Testes automatizados
+
+Foram implementados trinta testes automatizados distribuídos em quatro classes. Eles verificam regras de combate, comportamento das pistas, gerenciamento da partida e progressão das ondas.
+
+A execução da suíte completa com Maven foi concluída com sucesso, sem falhas, erros ou testes ignorados.
+
+---
+
+## 6. Modelagem UML final
+
+A modelagem final representa a estrutura do projeto após a implementação das funcionalidades adicionais, incluindo o chefe final, sua fábrica específica, a pontuação e a coordenação das etapas da partida.
+
+### Diagrama de classes final
 
 ```mermaid
 classDiagram
+    class Main {
+        +main(String[] args)
+    }
+
+    class Game {
+        -Player player
+        -List~Lane~ lanes
+        -Wave currentWave
+        -EnemyFactory commonEnemyFactory
+        -EnemyFactory bossFactory
+        -boolean bossSpawned
+        -boolean bossDefeated
+        +start()
+    }
+
     class Player {
         -int lives
         -int score
-        -AttackStrategy attackStrategy
-        +attack(Lane lane)
-        +takeDamage()
+        +isAlive() boolean
+        +takeDamage(int damage)
         +addScore(int points)
     }
+
+    class Lane {
+        -int number
+        -List~Enemy~ enemies
+        +addEnemy(Enemy enemy)
+        +removeDefeatedEnemies()
+        +getTotalPositions() int
+    }
+
     class Enemy {
         <<abstract>>
         -int health
         -int position
-        +move()
+        +isAlive() boolean
         +takeDamage(int damage)
-        +isDefeated() bool
+        +move()
+        +getPoints() int
     }
+
     class CommonEnemy {
-        +CommonEnemy()
+        +getPoints() int
     }
+
     class Boss {
-        +Boss()
+        +getPoints() int
     }
+
+    class Wave {
+        -int number
+        -int spawnedEnemies
+        +hasEnemiesToSpawn() boolean
+        +registerSpawn()
+        +registerSpawn(int amount)
+        +isFinished() boolean
+    }
+
     class EnemyFactory {
         <<abstract>>
-        +createEnemy()* Enemy
+        +createEnemy() Enemy
     }
+
     class CommonEnemyFactory {
         +createEnemy() Enemy
     }
+
     class BossFactory {
         +createEnemy() Enemy
     }
+
+    class AttackStrategy {
+        <<interface>>
+        +attack(Enemy enemy)
+    }
+
+    class BasicAttack {
+        -int DAMAGE
+        +attack(Enemy enemy)
+    }
+
+    class GameConsole {
+        +showWelcome()
+        +showGameState()
+        +showVictory()
+        +showGameOver()
+    }
+
+    Main --> Game : inicia
+    Game --> Player : gerencia
+    Game --> Lane : controla três pistas
+    Game --> Wave : controla progressão
+    Game --> EnemyFactory : utiliza fábricas
+    Game --> GameConsole : apresenta informações
+    Lane o-- Enemy : armazena
     Enemy <|-- CommonEnemy
     Enemy <|-- Boss
     EnemyFactory <|-- CommonEnemyFactory
     EnemyFactory <|-- BossFactory
-    EnemyFactory ..> Enemy : creates
+    CommonEnemyFactory ..> CommonEnemy : cria
+    BossFactory ..> Boss : cria
+    AttackStrategy <|.. BasicAttack
+    BasicAttack ..> Enemy : aplica dano
 ```
 
-No modelo final, `Player` acumulará 100 pontos por inimigo comum derrotado e 500 pontos ao derrotar o chefão. `Boss` terá cinco pontos de vida, enquanto `CommonEnemy` terá um. A implementação deverá assegurar que os pontos sejam concedidos uma única vez por inimigo derrotado. O diagrama final completo também deverá manter os relacionamentos de `Game`, `Lane`, `Wave`, `AttackStrategy`, `BasicAttack` e `GameConsole` apresentados na UML inicial.
+O diagrama final evidencia a especialização de `Enemy` em `CommonEnemy` e `Boss`, além das implementações específicas de `EnemyFactory`. A classe `Game` coordena a partida, utilizando as fábricas para criar os inimigos e a interface de terminal para apresentar as informações ao jogador.
 
-Os arquivos de imagem exportados dos diagramas poderão ser colocados em `docs/` e vinculados nesta seção quando estiverem disponíveis.
-
-## 8. Implementação e testes
-
-A implementação será realizada em Java, com comandos e resultados apresentados no terminal. A estrutura de classes e os detalhes do código serão documentados depois que a arquitetura for definida.
-
-Os testes deverão verificar, no mínimo:
-
-- a movimentação dos inimigos pelas lanes;
-- a aplicação de dano e a remoção de inimigos derrotados;
-- a perda de vida quando um inimigo alcança o jogador;
-- a atualização correta da pontuação;
-- a progressão entre as três ondas;
-- o aparecimento e a derrota do chefão;
-- as condições de vitória e derrota;
-- o comportamento ao atacar uma lane vazia e ao receber entradas inválidas.
-
-Os resultados dos testes, os comandos necessários para executar o jogo e eventuais requisitos de ambiente serão acrescentados após a implementação.
-
-## 9. Uso de ferramentas de Inteligência Artificial
-
-O enunciado permite o uso de ferramentas de IA, mas exige que o relatório informe em quais partes elas foram utilizadas e qual foi sua contribuição.
-
-Esta seção deverá ser preenchida com o registro real do desenvolvimento, indicando a ferramenta utilizada, a etapa em que foi usada, a contribuição recebida e o que foi revisado ou validado pelo autor. Não se deve declarar uma utilização ou contribuição que não tenha ocorrido.
-
-## 10. Organização prevista do repositório
-
-A estrutura abaixo é uma sugestão inicial e poderá ser ajustada quando os arquivos forem criados:
-
-```text
-lane-based-combat-game/
-├── README.md
-├── src/
-│   └── ... arquivos Java ...
-├── docs/
-│   ├── uml-inicial.png
-│   └── uml-final.png
-└── ... arquivos de teste, se aplicável ...
-```
-
-## 11. Relação com os requisitos do enunciado
-
-| Requisito | Como será atendido | Situação |
-|---|---|---|
-| Modelagem UML inicial | Diagrama dos principais componentes, responsabilidades, relacionamentos, Strategy e Factory Method | Proposta documentada; revisar após implementar |
-| Implementação em Java ou C++ | Jogo em Java com interface de terminal | Planejado |
-| Registro do uso de IA | Documentar ferramenta, etapa e contribuição, caso aplicável | A preencher durante o desenvolvimento |
-| Duas ou mais funcionalidades extras | Sistema de pontuação e chefão final | Definidas; implementação pendente |
-| UML das funcionalidades extras | Extensão do diagrama para refletir a pontuação, o chefão e sua fábrica | Extensão prevista; validar após implementar |
-| Relatório único | Este README será atualizado com decisões, padrões, diagramas e implementação | Em andamento |
-| Justificativa dos Design Patterns | Strategy separa o comportamento de ataque; Factory Method centraliza a criação de inimigos | Definidos para a UML inicial; confirmar na implementação |
-| Decisões e suposições | Registrar as regras propostas nesta documentação e futuras decisões | Em andamento |
-
-## 12. Referência ao enunciado
-
-Este projeto segue o enunciado **“Design Patterns — Lane-Based Combat Game”**, de Pedro Lopes, datado de outubro de 2026. O enunciado solicita um jogo com múltiplas lanes, inimigos que avançam em direção ao personagem, implementação em Java ou C++ com interface de terminal, pelo menos duas funcionalidades extras, modelagem UML inicial e final e um relatório que documente decisões de projeto, Design Patterns e eventual uso de IA.
+O diagrama é uma representação conceitual das principais classes e relações, e não uma listagem exaustiva de todos os atributos e métodos existentes no código-fonte.
 
 ---
 
-**Observação:** este README registra o planejamento consolidado até o momento. Para funcionar como relatório final de entrega, deverá ser atualizado após a conclusão dos diagramas UML, da escolha definitiva dos padrões, da implementação e dos testes.
+## 7. Uso de ferramentas de inteligência artificial
+
+Durante o desenvolvimento, o ChatGPT foi utilizado como ferramenta de apoio para discutir a organização do código, compreender a aplicação dos padrões de projeto, estruturar a modelagem UML, investigar problemas encontrados durante a implementação e organizar os testes automatizados.
+
+A ferramenta também auxiliou na revisão da documentação e na identificação de informações que precisavam ser alinhadas à versão implementada do projeto.
+
+O uso da inteligência artificial teve caráter de apoio ao desenvolvimento. As alterações foram aplicadas ao código do projeto, e a suíte de testes foi executada localmente por meio do Maven para verificar o resultado da implementação.
+
+A responsabilidade pela compreensão, revisão e entrega final do projeto permanece com a autora.
+
+---
+
+## 8. Testes automatizados e divisão dos 30 testes
+
+Os testes foram implementados com JUnit e estão organizados em quatro classes, separadas de acordo com as principais responsabilidades do sistema.
+
+A suíte foi executada com o comando:
+
+```bash
+mvn clean test
+```
+
+O resultado registrado foi:
+
+```text
+Tests run: 30, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
+
+### 8.1. Distribuição dos testes
+
+| Classe de teste | Quantidade | Responsabilidade principal |
+|---|---:|---|
+| `CombatTest` | 7 | Verificar dano de ataques, vida dos inimigos, derrota e pontuação |
+| `GameTest` | 11 | Verificar regras gerais da partida, ataques, pontuação, dano ao jogador e chefe final |
+| `LaneTest` | 6 | Verificar criação de pistas, armazenamento, movimentação e remoção de inimigos |
+| `ProgressionTest` | 6 | Verificar a geração e o encerramento das ondas |
+| **Total** | **30** | **Validação automatizada das principais regras do jogo** |
+
+### 8.2. Testes de combate — `CombatTest`
+
+Os sete testes dessa classe verificam comportamentos relacionados ao combate:
+
+- Derrota de um inimigo comum após receber um ataque.
+- Vida inicial do chefe.
+- Redução da vida do chefe a cada ataque.
+- Derrota do chefe após receber três ataques.
+- Pontuação concedida pela derrota de um inimigo comum.
+- Pontuação concedida pela derrota do chefe.
+- Comportamento do ataque quando a pista não possui inimigos.
+
+### 8.3. Testes do jogo — `GameTest`
+
+Os onze testes dessa classe verificam o funcionamento integrado das regras da partida:
+
+- Inicialização do jogador com três vidas.
+- Criação das três pistas vazias.
+- Inicialização na primeira onda.
+- Derrota de inimigo comum e concessão de pontos.
+- Ausência de pontuação ao atacar uma pista vazia.
+- Ausência de pontuação ao selecionar uma pista inválida.
+- Prioridade do inimigo mais próximo do jogador durante o ataque.
+- Atualização da contagem de inimigos derrotados ou resolvidos.
+- Derrota do chefe, concessão de pontos e atualização do estado da partida.
+- Dano ao jogador e remoção de um inimigo que alcança sua posição.
+- Formação do confronto final com o chefe na pista central e quatro inimigos de apoio.
+
+### 8.4. Testes das pistas — `LaneTest`
+
+Os seis testes dessa classe verificam o gerenciamento dos inimigos nas pistas:
+
+- Criação de uma pista inicialmente vazia.
+- Adição de um inimigo à pista.
+- Avanço da posição do inimigo.
+- Remoção de inimigos derrotados.
+- Identificação e remoção de um inimigo que alcança o jogador.
+- Rejeição de números de pista inválidos.
+
+### 8.5. Testes de progressão — `ProgressionTest`
+
+Os seis testes dessa classe verificam o controle das ondas:
+
+- Inicialização da onda com o número correto.
+- Inicialização da contagem de inimigos gerados.
+- Geração de dez inimigos previstos para a onda.
+- Impedimento de geração acima do limite da onda.
+- Criação do tipo esperado de inimigo comum.
+- Atualização da conclusão da onda após o registro da geração de dez inimigos.
+
+### 8.6. Resultado da validação
+
+A execução de `mvn clean test` confirmou que os trinta testes foram executados sem falhas, erros ou testes ignorados.
+
+Esse resultado demonstra que os cenários cobertos pela suíte automatizada estão passando na versão testada do projeto. Ele não significa, isoladamente, que todos os comportamentos possíveis do jogo estejam cobertos por testes.
+
+---
+
+## 9. Como executar o projeto
+
+### Pré-requisitos
+
+- Java Development Kit (JDK) 17 ou compatível.
+- Apache Maven instalado e disponível no terminal.
+
+### Compilar o projeto
+
+Na raiz do repositório, execute:
+
+```bash
+mvn clean compile
+```
+
+### Executar os testes
+
+```bash
+mvn clean test
+```
+
+### Gerar o pacote
+
+```bash
+mvn package
+```
+
+### Iniciar o jogo
+
+Após a compilação bem-sucedida, execute:
+
+```bash
+java -cp target/classes com.lanebasedcombat.Main
+```
+
+O jogo será iniciado no terminal, onde o usuário poderá acompanhar a partida e interagir conforme as instruções apresentadas pela interface.
+
+---
+
+## 10. Estrutura do projeto
+
+```text
+lane-based-combat-game/
+├── src/
+│   ├── main/
+│   │   └── java/
+│   │       └── com/
+│   │           └── lanebasedcombat/
+│   │               ├── Main.java
+│   │               ├── factory/
+│   │               │   ├── EnemyFactory.java
+│   │               │   ├── CommonEnemyFactory.java
+│   │               │   └── BossFactory.java
+│   │               ├── game/
+│   │               │   └── Game.java
+│   │               ├── model/
+│   │               │   ├── Lane.java
+│   │               │   ├── Player.java
+│   │               │   ├── Wave.java
+│   │               │   └── enemy/
+│   │               │       ├── Enemy.java
+│   │               │       ├── CommonEnemy.java
+│   │               │       └── Boss.java
+│   │               ├── strategy/
+│   │               │   ├── AttackStrategy.java
+│   │               │   └── BasicAttack.java
+│   │               └── ui/
+│   │                   └── GameConsole.java
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── lanebasedcombat/
+│                   ├── combat/
+│                   │   └── CombatTest.java
+│                   ├── game/
+│                   │   └── GameTest.java
+│                   ├── model/
+│                   │   └── LaneTest.java
+│                   └── progression/
+│                       └── ProgressionTest.java
+├── pom.xml
+└── README.md
+```
+
+---
+
+## 11. Considerações finais
+
+O projeto aplica conceitos de Programação Orientada a Objetos e padrões de projeto em um jogo de combate por turnos. A separação entre as entidades do domínio, a criação de inimigos, os comportamentos de ataque e o gerenciamento da partida contribui para uma estrutura mais organizada e extensível.
+
+A implementação das ondas, da movimentação dos inimigos, da pontuação e do chefe final amplia a lógica de jogo em relação à estrutura básica. Por fim, os trinta testes automatizados fornecem uma forma de verificar os principais comportamentos implementados e ajudam a reduzir regressões durante futuras alterações.
