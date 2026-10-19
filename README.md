@@ -34,79 +34,24 @@ A modelagem UML inicial representa a estrutura fundamental planejada para o jogo
 
 ```mermaid
 classDiagram
-    class Main {
-        +main(String[] args)
-    }
-
-    class Game {
-        -Player player
-        -List~Lane~ lanes
-        -Wave currentWave
-        -GameConsole console
-        +start()
-    }
-
-    class GameConsole {
-        +showWelcome()
-        +showGameState()
-        +showVictory()
-        +showGameOver()
-    }
-
-    class Player {
-        -int lives
-        -int score
-        +isAlive() boolean
-        +takeDamage(int damage)
-        +addScore(int points)
-    }
-
-    class Lane {
-        -int number
-        -List~Enemy~ enemies
-        +addEnemy(Enemy enemy)
-        +removeDefeatedEnemies()
-    }
-
+    class Main
+    class Game
+    class GameConsole
+    class Player
+    class Lane
     class Enemy {
         <<abstract>>
-        -int health
-        -int position
-        +isAlive() boolean
-        +takeDamage(int damage)
-        +move()
-        +getPoints() int
     }
-
-    class CommonEnemy {
-        +getPoints() int
-    }
-
-    class Wave {
-        -int number
-        -int spawnedEnemies
-        +hasEnemiesToSpawn() boolean
-        +registerSpawn()
-        +isFinished() boolean
-    }
-
+    class CommonEnemy
+    class Wave
     class EnemyFactory {
         <<abstract>>
-        +createEnemy() Enemy
     }
-
-    class CommonEnemyFactory {
-        +createEnemy() Enemy
-    }
-
+    class CommonEnemyFactory
     class AttackStrategy {
         <<interface>>
-        +attack(Enemy enemy)
     }
-
-    class BasicAttack {
-        +attack(Enemy enemy)
-    }
+    class BasicAttack
 
     Main ..> Game : inicia
     Game --> Player : gerencia
@@ -284,99 +229,27 @@ A versão atualizada da modelagem UML representa a arquitetura após a incorpora
 
 ```mermaid
 classDiagram
-    class Main {
-        +main(String[] args)
-    }
-
-    class GameFacade {
-        -Game game
-        +GameFacade()
-        +startGame()
-    }
-
-    class Game {
-        -Player player
-        -List~Lane~ lanes
-        -Wave currentWave
-        -EnemyFactory commonEnemyFactory
-        -EnemyFactory bossFactory
-        -boolean bossSpawned
-        -boolean bossDefeated
-        +start()
-    }
-
-    class Player {
-        -int lives
-        -int score
-        +isAlive() boolean
-        +takeDamage(int damage)
-        +addScore(int points)
-    }
-
-    class Lane {
-        -int number
-        -List~Enemy~ enemies
-        +addEnemy(Enemy enemy)
-        +removeDefeatedEnemies()
-        +getTotalPositions() int
-    }
-
+    class Main
+    class GameFacade
+    class Game
+    class Player
+    class Lane
     class Enemy {
         <<abstract>>
-        -int health
-        -int position
-        +isAlive() boolean
-        +takeDamage(int damage)
-        +move()
-        +getPoints() int
     }
-
-    class CommonEnemy {
-        +getPoints() int
-    }
-
-    class Boss {
-        +getPoints() int
-    }
-
-    class Wave {
-        -int number
-        -int spawnedEnemies
-        +hasEnemiesToSpawn() boolean
-        +registerSpawn()
-        +registerSpawn(int amount)
-        +isFinished() boolean
-    }
-
+    class CommonEnemy
+    class Boss
+    class Wave
     class EnemyFactory {
         <<abstract>>
-        +createEnemy() Enemy
     }
-
-    class CommonEnemyFactory {
-        +createEnemy() Enemy
-    }
-
-    class BossFactory {
-        +createEnemy() Enemy
-    }
-
+    class CommonEnemyFactory
+    class BossFactory
     class AttackStrategy {
         <<interface>>
-        +attack(Enemy enemy)
     }
-
-    class BasicAttack {
-        -int DAMAGE
-        +attack(Enemy enemy)
-    }
-
-    class GameConsole {
-        +showWelcome()
-        +showGameState()
-        +showVictory()
-        +showGameOver()
-    }
+    class BasicAttack
+    class GameConsole
 
     Main ..> GameFacade : inicia
     GameFacade --> Game : encapsula inicializacao
