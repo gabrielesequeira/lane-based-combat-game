@@ -2,16 +2,18 @@
 
 ## 1. Visão geral do projeto
 
-O **Lane-Based Combat Game** é um jogo de combate por turnos desenvolvido em Java, executado no terminal. O jogador precisa defender sua posição contra inimigos que avançam por três pistas. A cada turno, é necessário escolher uma pista e atacar os inimigos antes que eles alcancem o jogador.
+O **Lane-Based Combat Game** é um jogo de combate por turnos desenvolvido em Java, executado no terminal. O jogador precisa defender sua posição contra inimigos que avançam por três pistas (de cima para baixo). A cada turno, é necessário escolher uma pista e atacar os inimigos antes que eles alcancem o jogador.
 
-O jogo foi desenvolvido com foco na aplicação de conceitos de Programação Orientada a Objetos e padrões de projeto, buscando separar as responsabilidades de gerenciamento da partida, representação dos personagens, criação dos inimigos, execução dos ataques e interação com o usuário.
+O jogo foi desenvolvido com foco na aplicação de conceitos de Programação Orientada a Objetos para Engenharia de Software, aplicando conceitos de encapsulamento, herança, abstração e polimorfismo, buscando separar as responsabilidades de gerenciamento da partida, representação dos personagens, criação dos inimigos, execução dos ataques e interação com o usuário.
 
 ### Objetivos do projeto
 
-- Desenvolver um jogo funcional executado no terminal.
-- Aplicar conceitos de encapsulamento, herança, abstração e polimorfismo.
-- Utilizar padrões de projeto para organizar a criação de inimigos e o comportamento de ataque.
-- Implementar progressão por ondas e uma batalha final contra um chefe.
+- Desenvolver um jogo funcional executado no terminal em linguagem Java.
+- Utilizar caminhos (lanes) pelos quais o jogador atacará a progressão de ondas (waves) de inimigos que se aproximam.
+- Criar diagramas utilizando a Unified Modeling Language (UML).
+- Utilizar padrões de projetos ( design patterns) soluções reutilizaveis para problemas recorrentes.
+- Identificação de uso de ferramentas de Inteligência Artificial (IA) no projeto. 
+- Adicionar funcionalidades extras ( sistema de pontuação e chefão final)
 - Criar testes automatizados para verificar as principais regras e comportamentos do jogo.
 
 ### Tecnologias utilizadas
@@ -176,7 +178,7 @@ O código foi organizado em pacotes de acordo com a responsabilidade de cada com
 - `model`: entidades e estruturas fundamentais do jogo.
 - `model.enemy`: hierarquia de inimigos.
 - `strategy`: contratos e implementações de ataques.
-- `ui`: interação com o usuário por meio do terminal.
+- `ui`: experiência de usuário para interação com o jogador por meio do terminal.
 
 A classe `Main` funciona como ponto de entrada da aplicação.
 
@@ -186,7 +188,7 @@ As entidades do domínio não concentram toda a lógica da aplicação. A classe
 
 A classe `GameConsole` é responsável pela apresentação de informações e pela interação com o usuário no terminal.
 
-Essa separação facilita a manutenção do código e permite testar diferentes partes do sistema de maneira mais isolada.
+Essa separação facilita a manutenção do código e permite testar diferentes partes do sistema de maneira mais isolada, separando as diferentes responsabilidades.
 
 ### 4.3. Hierarquia de inimigos
 
@@ -215,9 +217,9 @@ A pontuação é armazenada no jogador e atualizada durante a partida.
 
 ### 4.6. Condições de vitória e derrota
 
-A derrota acontece quando o jogador perde todas as vidas disponíveis.
+--> A derrota acontece quando o jogador perde todas as vidas disponíveis.
 
-A vitória acontece quando o chefe final é derrotado, desde que o jogador ainda esteja vivo.
+--> A vitória acontece quando o chefe final é derrotado, desde que o jogador ainda esteja vivo.
 
 Essas condições determinam o encerramento da partida e a apresentação do resultado final.
 
@@ -247,25 +249,18 @@ A regra permite acompanhar o desempenho do jogador durante a partida.
 
 Após a resolução dos inimigos das três ondas regulares e quando não há mais inimigos ocupando as pistas, o jogo inicia o confronto final.
 
-O chefe possui três pontos de vida e aparece na pista central. Sua derrota encerra a partida com vitória, desde que o jogador permaneça vivo.
+O chefe possui três pontos de vida e aparece na pista central acompanhado de inimigos de apoio. Sua derrota encerra a partida com vitória, desde que o jogador permaneça vivo.
 
 ### 5.5. Inimigos de apoio do chefe
 
 A batalha final inclui quatro inimigos comuns de apoio: dois em cada uma das pistas laterais. O chefe permanece na pista central.
 
-Essa formação adiciona um desafio à etapa final, pois o jogador precisa lidar com o chefe e com os inimigos de apoio.
+Essa formação adiciona um desafio à etapa final, pois o jogador precisa alcançar o chefe e lidar ao mesmo tempo com os inimigos de apoio.
 
 ### 5.6. Interface de terminal
 
 A classe `GameConsole` apresenta as informações da partida, incluindo o estado das pistas, a situação do jogador e a pontuação. Também apresenta mensagens relacionadas aos ataques, à movimentação dos inimigos e ao encerramento do jogo.
 
-### 5.7. Testes automatizados
-
-Foram implementados trinta testes automatizados distribuídos em quatro classes. Eles verificam regras de combate, comportamento das pistas, gerenciamento da partida e progressão das ondas.
-
-A execução da suíte completa com Maven foi concluída com sucesso, sem falhas, erros ou testes ignorados.
-
----
 
 ## 6. Modelagem UML final
 
@@ -388,19 +383,15 @@ O diagrama é uma representação conceitual das principais classes e relações
 
 ## 7. Uso de ferramentas de inteligência artificial
 
-Durante o desenvolvimento, o ChatGPT foi utilizado como ferramenta de apoio para discutir a organização do código, compreender a aplicação dos padrões de projeto, estruturar a modelagem UML, investigar problemas encontrados durante a implementação e organizar os testes automatizados.
+Durante o desenvolvimento, o ChatGPT foi utilizado como ferramenta de apoio para discutir a organização e estruturação do código, investigar problemas encontrados durante a implementação e organizar os testes automatizados.
 
-A ferramenta também auxiliou na revisão da documentação e na identificação de informações que precisavam ser alinhadas à versão implementada do projeto.
-
-O uso da inteligência artificial teve caráter de apoio ao desenvolvimento. As alterações foram aplicadas ao código do projeto, e a suíte de testes foi executada localmente por meio do Maven para verificar o resultado da implementação.
-
-A responsabilidade pela compreensão, revisão e entrega final do projeto permanece com a autora.
+O uso da inteligência artificial teve caráter de apoio ao desenvolvimento do sistema. A responsabilidade pela compreensão, revisão e entrega final do projeto permanece com a autora.
 
 ---
 
 ## 8. Testes automatizados e divisão dos 30 testes
 
-Os testes foram implementados com JUnit e estão organizados em quatro classes, separadas de acordo com as principais responsabilidades do sistema.
+Os testes automatizados foram desenvolvidos com JUnit 5, framework utilizado para definir e executar os casos de teste por meio de recursos como @Test e Assertions. O Maven, aqui foi utilizado para executar a suíte de testes por meio do plugin Surefire.  estão organizados em quatro classes, separadas de acordo com as principais responsabilidades do sistema.
 
 A suíte foi executada com o comando:
 
@@ -479,7 +470,7 @@ Os seis testes dessa classe verificam o controle das ondas:
 
 A execução de `mvn clean test` confirmou que os trinta testes foram executados sem falhas, erros ou testes ignorados.
 
-Esse resultado demonstra que os cenários cobertos pela suíte automatizada estão passando na versão testada do projeto. Ele não significa, isoladamente, que todos os comportamentos possíveis do jogo estejam cobertos por testes.
+Esse resultado demonstra que os cenários cobertos pela suíte automatizada estão passando na versão testada do projeto.
 
 ---
 
@@ -567,10 +558,5 @@ lane-based-combat-game/
 └── README.md
 ```
 
----
 
-## 11. Considerações finais
-
-O projeto aplica conceitos de Programação Orientada a Objetos e padrões de projeto em um jogo de combate por turnos. A separação entre as entidades do domínio, a criação de inimigos, os comportamentos de ataque e o gerenciamento da partida contribui para uma estrutura mais organizada e extensível.
-
-A implementação das ondas, da movimentação dos inimigos, da pontuação e do chefe final amplia a lógica de jogo em relação à estrutura básica. Por fim, os trinta testes automatizados fornecem uma forma de verificar os principais comportamentos implementados e ajudam a reduzir regressões durante futuras alterações.
+## FIM
