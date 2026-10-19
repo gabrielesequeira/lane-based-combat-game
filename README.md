@@ -1,4 +1,4 @@
-﻿# Lane-Based Combat Game
+# Lane-Based Combat Game
 
 ## 1. Visão geral do projeto
 
@@ -25,11 +25,10 @@ O jogo foi desenvolvido com foco na aplicação de conceitos de Programação Or
 
 ---
 
+
 ## 2. Modelagem UML inicial
 
-A modelagem inicial representa a estrutura fundamental planejada para o jogo, considerando as responsabilidades centrais antes da incorporação das funcionalidades adicionais.
-
-A estrutura parte de uma classe responsável pelo gerenciamento da partida, uma representação do jogador, pistas que armazenam os inimigos, uma classe abstrata para os inimigos e uma estrutura para controlar as ondas. Também contempla os contratos para criação de inimigos e execução de ataques.
+A modelagem UML inicial representa a estrutura fundamental planejada para o jogo, antes da incorporação das funcionalidades adicionais. Ela identifica as principais entidades do domínio, suas responsabilidades e as relações necessárias para implementar o combate, o gerenciamento das pistas e a criação dos inimigos.
 
 ### Diagrama de classes inicial
 
@@ -43,7 +42,15 @@ classDiagram
         -Player player
         -List~Lane~ lanes
         -Wave currentWave
+        -GameConsole console
         +start()
+    }
+
+    class GameConsole {
+        +showWelcome()
+        +showGameState()
+        +showVictory()
+        +showGameOver()
     }
 
     class Player {
@@ -101,31 +108,29 @@ classDiagram
         +attack(Enemy enemy)
     }
 
-    Main --> Game
-    Game --> Player
-    Game --> Lane
-    Game --> Wave
-    Lane o-- Enemy
+    Main ..> Game : inicia
+    Game --> Player : gerencia
+    Game --> Lane : controla
+    Game --> Wave : acompanha
+    Game --> GameConsole : apresenta informacoes
+    Lane o-- Enemy : armazena
     Enemy <|-- CommonEnemy
     EnemyFactory <|-- CommonEnemyFactory
-    EnemyFactory ..> Enemy : cria
+    CommonEnemyFactory ..> CommonEnemy : cria
     AttackStrategy <|.. BasicAttack
     BasicAttack ..> Enemy : ataca
 ```
 
-A modelagem inicial estabelece as principais relações do domínio. A classe `Game` coordena os elementos da partida; `Lane` mantém os inimigos presentes em cada pista; `Enemy` define os comportamentos compartilhados pelos inimigos; e `Wave` controla a progressão da partida.
+A versão inicial estabelece a separação entre o gerenciamento da partida, o jogador, as pistas, os inimigos, as ondas e o combate. Os padrões Strategy e Factory Method permitem, respectivamente, separar o comportamento de ataque e organizar a criação dos inimigos.
 
-Os padrões Strategy e Factory Method foram incorporados para permitir que o comportamento de ataque e a criação de inimigos sejam organizados em componentes específicos.
-
----
 
 ## 3. Padrões de projeto utilizados e justificativas
 
-Foram utilizados dois padrões de projeto: **Strategy** e **Factory Method**.
+Foram utilizados três padrões de projeto: **Strategy**, **Factory Method** e **Facade**.
 
 ### 3.1. Strategy
 
-**Objetivo:** encapsular o comportamento de ataque em uma abstração separada, permitindo que a lógica de combate não dependa diretamente de uma implementação específica.
+**Objetivo:** encapsular o comportamento de ataque em uma abstração separada.
 
 No projeto, o padrão é representado por:
 
@@ -134,13 +139,13 @@ No projeto, o padrão é representado por:
 
 A classe `BasicAttack` verifica se o inimigo recebido não é nulo e está vivo antes de aplicar um ponto de dano.
 
-Essa separação facilita a evolução do sistema. Caso seja necessário adicionar outros tipos de ataque no futuro, novas implementações poderão seguir o contrato `AttackStrategy`, sem exigir que todas as regras de ataque sejam concentradas em uma única classe.
+Essa separação permite adicionar novos tipos de ataque por meio de implementações de `AttackStrategy`, sem concentrar todos os comportamentos em uma única classe.
 
-**Justificativa:** o padrão foi utilizado para separar a lógica de ataque das demais responsabilidades do jogo, favorecendo a organização, a manutenção e a possibilidade de extensão do combate.
+**Justificativa:** o padrão foi utilizado para separar a lógica de ataque das demais responsabilidades do jogo, favorecendo a organização, a manutenção e a extensibilidade do combate.
 
 ### 3.2. Factory Method
 
-**Objetivo:** centralizar a criação de objetos de inimigos por meio de um contrato comum, deixando que implementações específicas determinem qual tipo de inimigo será instanciado.
+**Objetivo:** centralizar a criação de objetos de inimigos por meio de um contrato comum.
 
 No projeto, o padrão é representado por:
 
@@ -150,18 +155,27 @@ No projeto, o padrão é representado por:
 
 As fábricas retornam objetos do tipo abstrato `Enemy`, embora cada implementação produza uma classe concreta diferente.
 
-**Justificativa:** o padrão reduz o acoplamento entre a lógica de gerenciamento da partida e a instanciação dos inimigos. A criação de inimigos comuns e do chefe fica concentrada em classes próprias, facilitando a inclusão de novos tipos de inimigos.
+**Justificativa:** o padrão reduz o acoplamento entre a lógica de gerenciamento da partida e a instanciação dos inimigos. A criação de inimigos comuns e do chefe fica concentrada em classes próprias, facilitando a manutenção e a inclusão de novos tipos de inimigos.
 
-### 3.3. Relação entre os padrões e a arquitetura
+### 3.3. Facade
 
-Os dois padrões atendem a responsabilidades diferentes:
+**Objetivo:** oferecer um ponto de entrada simplificado para iniciar o jogo.
+
+No projeto, `GameFacade` cria uma instância de `Game` e disponibiliza o método `startGame()`. A classe `Main` utiliza essa fachada para iniciar a partida sem instanciar `Game` diretamente.
+
+**Justificativa:** a fachada simplifica a inicialização do jogo e oculta da classe de entrada o detalhe de criação do objeto `Game`. Ela não elimina todas as dependências internas do sistema.
+
+### 3.4. Relação entre os padrões e a arquitetura
+
+Os três padrões atendem a responsabilidades diferentes:
 
 | Padrão | Responsabilidade no projeto | Benefício |
 |---|---|---|
-| Strategy | Define como um ataque é realizado | Facilita a substituição e a extensão dos comportamentos de ataque |
-| Factory Method | Define como cada tipo de inimigo é criado | Centraliza a instanciação e reduz o acoplamento |
+| Strategy | Define como um ataque é realizado | Facilita a extensão dos comportamentos de ataque |
+| Factory Method | Define como os inimigos são criados | Centraliza a instanciação e reduz o acoplamento |
+| Facade | Simplifica a inicialização do jogo | Oculta o detalhe de criação de `Game` da classe `Main` |
 
-A aplicação dos padrões contribui para uma arquitetura mais organizada, na qual criação de objetos, comportamento de combate e gerenciamento da partida possuem responsabilidades distintas.
+A aplicação dos padrões contribui para uma arquitetura mais organizada, separando o comportamento de ataque, a criação de inimigos e o ponto de entrada da aplicação.
 
 ---
 
@@ -262,9 +276,9 @@ Essa formação adiciona um desafio à etapa final, pois o jogador precisa alcan
 A classe `GameConsole` apresenta as informações da partida, incluindo o estado das pistas, a situação do jogador e a pontuação. Também apresenta mensagens relacionadas aos ataques, à movimentação dos inimigos e ao encerramento do jogo.
 
 
-## 6. Modelagem UML final
+## 6. Modelagem UML final — versão atualizada
 
-A modelagem final representa a estrutura do projeto após a implementação das funcionalidades adicionais, incluindo o chefe final, sua fábrica específica, a pontuação e a coordenação das etapas da partida.
+A versão atualizada da modelagem UML representa a arquitetura após a incorporação das funcionalidades adicionais. Em relação ao modelo inicial, foram incluídos o chefe final, sua fábrica específica, os mecanismos de progressão e encerramento da partida, a interface de terminal e a fachada responsável por simplificar o ponto de entrada da aplicação.
 
 ### Diagrama de classes final
 
@@ -272,6 +286,12 @@ A modelagem final representa a estrutura do projeto após a implementação das 
 classDiagram
     class Main {
         +main(String[] args)
+    }
+
+    class GameFacade {
+        -Game game
+        +GameFacade()
+        +startGame()
     }
 
     class Game {
@@ -358,26 +378,30 @@ classDiagram
         +showGameOver()
     }
 
-    Main --> Game : inicia
+    Main ..> GameFacade : inicia
+    GameFacade --> Game : encapsula inicializacao
     Game --> Player : gerencia
-    Game --> Lane : controla três pistas
-    Game --> Wave : controla progressão
-    Game --> EnemyFactory : utiliza fábricas
-    Game --> GameConsole : apresenta informações
+    Game --> Lane : controla as pistas
+    Game --> Wave : controla progressao
+    Game --> EnemyFactory : utiliza fabricas
+    Game --> GameConsole : apresenta informacoes
+
     Lane o-- Enemy : armazena
     Enemy <|-- CommonEnemy
     Enemy <|-- Boss
+
     EnemyFactory <|-- CommonEnemyFactory
     EnemyFactory <|-- BossFactory
     CommonEnemyFactory ..> CommonEnemy : cria
     BossFactory ..> Boss : cria
+
     AttackStrategy <|.. BasicAttack
     BasicAttack ..> Enemy : aplica dano
 ```
 
-O diagrama final evidencia a especialização de `Enemy` em `CommonEnemy` e `Boss`, além das implementações específicas de `EnemyFactory`. A classe `Game` coordena a partida, utilizando as fábricas para criar os inimigos e a interface de terminal para apresentar as informações ao jogador.
+A versão final evidencia a evolução da arquitetura: a classe `Boss` especializa `Enemy`, enquanto `BossFactory` centraliza sua criação. A classe `Game` coordena as pistas, o jogador, as ondas, as fábricas e a interface de terminal. A classe `GameFacade` fornece uma entrada simplificada para iniciar a partida, sendo utilizada pela classe `Main`.
 
-O diagrama é uma representação conceitual das principais classes e relações, e não uma listagem exaustiva de todos os atributos e métodos existentes no código-fonte.
+A comparação entre os diagramas permite identificar as novas classes, as relações adicionadas e a evolução das responsabilidades. Os diagramas representam as principais classes e relações do projeto, sem pretender reproduzir todos os detalhes da implementação.
 
 ---
 
@@ -527,6 +551,8 @@ lane-based-combat-game/
 │   │               │   ├── EnemyFactory.java
 │   │               │   ├── CommonEnemyFactory.java
 │   │               │   └── BossFactory.java
+|   |               ├── facade/
+│   |               |   └── GameFacade.java
 │   │               ├── game/
 │   │               │   └── Game.java
 │   │               ├── model/

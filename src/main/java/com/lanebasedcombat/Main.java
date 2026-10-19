@@ -1,11 +1,11 @@
 package com.lanebasedcombat;
 
-import com.lanebasedcombat.game.Game;
+import com.lanebasedcombat.facade.GameFacade;
 
 public class Main {
 
     public static void main(String[] args) {
-        Game game = new Game();
-        game.start();
+        GameFacade facade = new GameFacade();
+        facade.startGame();
     }
 }

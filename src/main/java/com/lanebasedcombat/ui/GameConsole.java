@@ -24,7 +24,6 @@ public class GameConsole {
         System.out.println("- Se um inimigo alcançar você, perderá vida.");
         System.out.println("- Para vencer, derrote o chefe na batalha final.");
         System.out.println();
-        System.out.println("==================================================");
     }
 
     public void showTurnHeader(
@@ -45,7 +44,6 @@ public class GameConsole {
                 + " | Pontos: " + score);
         System.out.println("Inimigos restantes: " + remainingEnemies);
         System.out.println();
-
 
     }
 
@@ -96,6 +94,7 @@ public class GameConsole {
             }
 
             System.out.println("Opcao invalida. Escolha 1, 2 ou 3.");
+
         }
     }
 
@@ -118,6 +117,7 @@ public class GameConsole {
     }
 
     public void showMessage(String message) {
+
         System.out.println("[JOGO] " + message);
     }
 
